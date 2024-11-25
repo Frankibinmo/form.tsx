@@ -1,37 +1,36 @@
-import React, { FormEvent, useRef } from 'react'
+import React, { FormEvent, useState } from 'react'
+import {  FieldValues, useForm } from 'react-hook-form'
 
 
 
 
-//  submitting your form to the server, this is the approach
+// applying validation in forms, using react hook
+
+
 const Forms = () => {
+  
+ const{register, handleSubmit, formState: {errors}} = useForm()
 
-  const nameRef = useRef<HTMLInputElement>(null);
-  const ageRef = useRef<HTMLInputElement>(null);
-  const person ={ 'name': '', 'Age': 0}
- 
-
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    if(nameRef.current !==null)
-      person.name = nameRef.current.value
-    if(ageRef.current !==null)
-      person.Age =  parseInt(ageRef.current.value);
-    console.log(person)
+  const onSubmit = (data: FieldValues ) => console.log(data)
 
 
-  }
   return (
-    <form onSubmit={handleSubmit}>
-        <div className="mb-3"><label htmlFor="name" className="form-label">Name</label>
-        <input ref={nameRef} id='name' type="text" className="form-control" />
+     <form onSubmit={handleSubmit (onSubmit)}>
+      <div className="mb-3"><label htmlFor="name" className="form-label">Name</label>
+        <input {...register('name', {required:true, minLength:3})} id='name' type="text" className="form-control"/>
+         {errors.name?.type==='required'&&<p>The name field is required.</p>},
+          { errors.name?.type==='minLength'&&<p>The name must be at least 3 characters</p>}
         </div>
-        <div className="mb-3"><label htmlFor="age" className="form-label">Age</label>
-        <input ref={ageRef} id='age' type="number" className="form-control" />
+        <div className="mb-3">
+          <label htmlFor="age" className="form-label">Age</label>
+        <input {...register('age')} id='age'type="text" className="form-control"/>
         </div>
-        <button className='btn btn-primary' type='submit'>Submit</button>
-    </form>
+        <button className='btn btn-secondary' type='submit'>submit</button>
+     </form>
   )
 }
 
 export default Forms
+
+
+
